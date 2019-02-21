@@ -32,3 +32,13 @@ result = cotoha_api.parse(sentence)
 # 出力結果を見やすく整形
 result_formated = json.dumps(result, indent=4, separators=(',', ': '))
 print(codecs.decode(result_formated, 'unicode-escape'))
+
+# 原始人
+result_list = list()
+
+for chunks in result['result']:
+        for token in chunks["tokens"]:
+            if token["pos"] != "格助詞" and token["pos"] != "連用助詞" and token["pos"] != "引用助詞" and token["pos"] != "終助詞":
+                result_list.append(token["kana"])
+                
+print(' '.join(result_list))
