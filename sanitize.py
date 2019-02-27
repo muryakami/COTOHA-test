@@ -7,7 +7,6 @@ FILE_NAME = 'data/xhtml/789_14547.html'
 
 with open(FILE_NAME, encoding='shift_jis') as f:
     data = f.read().encode('shift_jis')
-# f.close()
 
 cleaner = Cleaner(page_structure=False, remove_tags=(
     'ruby', 'br'), kill_tags=('rt', 'rp'))
@@ -22,21 +21,3 @@ PLAIN_TEXT = FILE_NAME.replace('xhtml', 'text').replace('.html', '.txt')
 print(PLAIN_TEXT)
 with open(PLAIN_TEXT, 'w') as f:
     f.write(plain_text)
-
-# センテンス区切り
-# for line in plain_text.splitlines():
-#   line = line.strip()
-
-#   if (not line):
-#     continue
-
-#   line = line.replace("。", "。\n")
-#   line = line.replace("「", "\n「")
-#   line = line.replace("」", "」\n")
-#   line = line.strip()
-
-#   if (line[-1] != "\n"):
-#     line += "\n"
-#   print(line, end='')
-
-# print("\n\n")
