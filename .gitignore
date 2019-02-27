@@ -1,2 +1,6 @@
-config.ini
-__pycache__/
+/.vscode/
+/__pycache__/
+/data/
+/settings/
+/result
+/pictures

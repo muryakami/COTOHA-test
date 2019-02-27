@@ -1,44 +1,51 @@
-# -*- coding: utf-8 -*-
+# Flask などの必要なライブラリをインポートする
+from flask import Flask, render_template, request, redirect, url_for
+import numpy as np
 
-import os
-import json
-import configparser
-import codecs
-from cotoha_api_python3 import CotohaApi
+# 自身の名称を app という名前でインスタンス化する
+app = Flask(__name__)
+
+# メッセージをランダムに表示するメソッド
 
 
-# ソースファイルの場所取得
-APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + "/"
+def picked_up():
+    messages = [
+        "こんにちは、あなたの名前を入力してください",
+        "やあ！お名前は何ですか？",
+        "あなたの名前を教えてね"
+    ]
+    # NumPy の random.choice で配列からランダムに取り出し
+    return np.random.choice(messages)
 
-# 設定値取得
-config = configparser.ConfigParser()
-config.read(APP_ROOT + "config.ini")
-CLIENT_ID = config.get("COTOHA API", "Developer Client id")
-CLIENT_SECRET = config.get("COTOHA API", "Developer Client secret")
-DEVELOPER_API_BASE_URL = config.get("COTOHA API", "Developer API Base URL")
-ACCESS_TOKEN_PUBLISH_URL = config.get("COTOHA API", "Access Token Publish URL")
+# ここからウェブアプリケーション用のルーティングを記述
+# index にアクセスしたときの処理
 
-# COTOHA APIインスタンス生成
-cotoha_api = CotohaApi(CLIENT_ID, CLIENT_SECRET,
-                       DEVELOPER_API_BASE_URL, ACCESS_TOKEN_PUBLISH_URL)
 
-# 解析対象文
-sentence = "すもももももももものうち"
-# sentence = input()
+@app.route('/')
+def index():
+    title = "ようこそ"
+    message = picked_up()
+    # index.html をレンダリングする
+    return render_template('index.html',
+                           message=message, title=title)
 
-# 構文解析API実行
-result = cotoha_api.parse(sentence)
+# /post にアクセスしたときの処理
 
-# 出力結果を見やすく整形
-result_formated = json.dumps(result, indent=4, separators=(',', ': '))
-print(codecs.decode(result_formated, 'unicode-escape'))
 
-# 原始人
-result_list = list()
+@app.route('/post', methods=['GET', 'POST'])
+def post():
+    title = "こんにちは"
+    if request.method == 'POST':
+        # リクエストフォームから「名前」を取得して
+        name = request.form['name']
+        # index.html をレンダリングする
+        return render_template('index.html',
+                               name=name, title=title)
+    else:
+        # エラーなどでリダイレクトしたい場合はこんな感じで
+        return redirect(url_for('index'))
 
-for chunks in result['result']:
-        for token in chunks["tokens"]:
-            if token["pos"] != "格助詞" and token["pos"] != "連用助詞" and token["pos"] != "引用助詞" and token["pos"] != "終助詞":
-                result_list.append(token["kana"])
-                
-print(' '.join(result_list))
+
+if __name__ == '__main__':
+    app.debug = True  # デバッグモード有効化
+    app.run(host='0.0.0.0')  # どこからでもアクセス可能に

@@ -135,7 +135,7 @@ class CotohaApi:
     # 照応解析API
 
     def coreference(self, document):
-        # 照応解析API 取得URL指定
+            # 照応解析API 取得URL指定
         url = self.developer_api_base_url + "beta/coreference"
         # ヘッダ指定
         headers = {
