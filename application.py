@@ -1,29 +1,51 @@
-from flask import Flask, render_template, request
-import re
+# Flask などの必要なライブラリをインポートする
+from flask import Flask, render_template, request, redirect, url_for
+import numpy as np
 
+# 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
 
-
-def count_word(text):
-
-    words = re.findall(r'[a-z0-9\\’\\\']+', text.lower())
-
-    return len(words)
+# メッセージをランダムに表示するメソッド
 
 
-@app.route('/', methods=['POST', 'GET'])
-def home():
+def picked_up():
+    messages = [
+        "こんにちは、あなたの名前を入力してください",
+        "やあ！お名前は何ですか？",
+        "あなたの名前を教えてね"
+    ]
+    # NumPy の random.choice で配列からランダムに取り出し
+    return np.random.choice(messages)
 
-    total = ''
+# ここからウェブアプリケーション用のルーティングを記述
+# index にアクセスしたときの処理
 
+
+@app.route('/')
+def index():
+    title = "ようこそ"
+    message = picked_up()
+    # index.html をレンダリングする
+    return render_template('index.html',
+                           message=message, title=title)
+
+# /post にアクセスしたときの処理
+
+
+@app.route('/post', methods=['GET', 'POST'])
+def post():
+    title = "こんにちは"
     if request.method == 'POST':
-        text = request.form['text']
-        total = count_word(text)
+        # リクエストフォームから「名前」を取得して
+        name = request.form['name']
+        # index.html をレンダリングする
+        return render_template('index.html',
+                               name=name, title=title)
+    else:
+        # エラーなどでリダイレクトしたい場合はこんな感じで
+        return redirect(url_for('index'))
 
-        return render_template('main.html', total=total, sentence=text)
 
-    return render_template('main.html', total=total)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.debug = True  # デバッグモード有効化
+    app.run(host='0.0.0.0')  # どこからでもアクセス可能に
