@@ -15,12 +15,13 @@ cln_html = cleaner.clean_html(data).decode('utf-8')
 
 plain_text = lxml.html.fromstring(cln_html).find_class('main_text')[
     0].text_content()
-print(plain_text)
+# print(plain_text)
 
 # 別ファイルへの保存
-# PLAIN_TEXT = FILE_NAME.replace('html', 'txt')
-# with open(PLAIN_TEXT, 'w') as f:
-#     f.write(plain_text)
+PLAIN_TEXT = FILE_NAME.replace('xhtml', 'text').replace('.html', '.txt')
+print(PLAIN_TEXT)
+with open(PLAIN_TEXT, 'w') as f:
+    f.write(plain_text)
 
 # センテンス区切り
 # for line in plain_text.splitlines():
