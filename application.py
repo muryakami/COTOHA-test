@@ -14,15 +14,15 @@ lines = loads(f.read())
 
 @app.route("/")
 def index():
-    app.logger.debug(lines['result'])
-    return render_template('index.html')
+    # app.logger.debug(lines['result'])
+    action = "read"
+    return render_template('index.html', action=action)
 
 
-@app.route('/get_text', methods=['POST'])
+@app.route('/read', methods=['POST'])
 def get_text():
     global lines
     # app.logger.debug(lines)
-    # print(lines)
 
     line_number = int(request.form['line_number'])
     # app.logger.debug(line_number)
