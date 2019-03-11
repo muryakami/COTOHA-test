@@ -1,4 +1,4 @@
-var url = location.href + 'read';
+var url = location.href;
 var reading = false;
 var line_number = 0;
 var instruction_text = "";
@@ -6,7 +6,7 @@ var brand_text = "";
 
 function read() {
   $.ajax({
-    url: url,
+    url: url + 'read',
     type: 'POST',
     dataType: 'JSON',
     data: {
@@ -26,13 +26,36 @@ function read() {
   });
 }
 
+function parse() {
+  $.ajax({
+    url: url + 'parse',
+    type: 'POST',
+    dataType: 'JSON',
+    data: {
+      'line_number': line_number
+    }
+  }).done(function (data) {
+    if (reading) {
+      debugger;
+      $("#document").text(data.sentence);
+      $("#result").text(data.kana)
+      line_number = data.next_line_number;
+      if (line_number != 0) {
+        setTimeout(read, data.text_length * 200);
+      } else {
+        setTimeout(stopReading, data.text_length * 200);
+      }
+    }
+  });
+}
+
 function startReading() {
-  $("button").text("ロウドク　ヤメ");
+  $("button").text("Stop");
   reading = true;
 }
 
 function resumeReading() {
-  $("button").text("ロウドク　ハジメ");
+  $("button").text("Start");
   reading = false;
 }
 
@@ -49,9 +72,11 @@ $(function () {
     } else {
       let action = $(this).attr('id');
       if (action === 'read') {
-        debugger;
         read();
+      } else if (action == 'parse') {
+        parse();
       } else {
+        debugger;
         read();
       }
       startReading();

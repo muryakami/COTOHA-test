@@ -2,44 +2,83 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
 from json import dumps, loads
+from cotoha_api import CotohaApi
 
 # 自身の名称を app という名前でインスタンス化する
 app = Flask(__name__)
 
-# json の場所を指定する
+# APP_ROOT の設定
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + "/"
-f = open(APP_ROOT + "data/json/neko.json", "r")
-lines = loads(f.read())
 
 
 @app.route("/")
 def index():
     # app.logger.debug(lines['result'])
-    action = "read"
+    action = "parse"
     return render_template('index.html', action=action)
 
 
 @app.route('/read', methods=['POST'])
-def get_text():
-    global lines
+def read():
+    # json の場所を指定する
+    f = open(APP_ROOT + "data/json/neko.json", "r")
+    lines = loads(f.read())
+
+    # global lines
     # app.logger.debug(lines)
 
-    line_number = int(request.form['line_number'])
-    # app.logger.debug(line_number)
-    if(len(lines['result']) <= line_number):
-        line_number = 0
+    # line_number = int(request.args.get('line_number'))  # ['GET']
+    line_number = int(request.form['line_number'])  # ['POST']
 
-    next_line_number = line_number + 1
-    # app.logger.debug(next_line_number)
-    if(len(lines['result']) <= next_line_number):
-        next_line_number = 0
+    line_number = __checkLineNumber__(len(lines), line_number)
+    next_line_number = __checkLineNumber__(len(lines), line_number + 1)
 
     d = lines['result'][line_number]
-    # app.logger.debug(d)
+
     d['text_length'] = len(d['form'])
     d['next_line_number'] = next_line_number
 
     return dumps(d)
+
+
+@app.route('/parse', methods=['POST'])
+def parse():
+    f = open(APP_ROOT + "data/text/sentence/neko.txt", "r")
+    document = f.read()
+    # num_lines = sum(1 for line in open(
+    #     APP_ROOT + 'data/text/sentence/neko.txt'))
+    lines = document.splitlines()
+
+    line_number = int(request.form['line_number'])
+
+    line_number = __checkLineNumber__(len(lines), line_number)
+    next_line_number = __checkLineNumber__(len(lines), line_number + 1)
+
+    # COTOHA APIインスタンス生成
+    cotoha_api = CotohaApi()
+    # 解析対象文
+    sentence = lines[line_number]
+    # 構文解析API実行
+    result = cotoha_api.parse(sentence)
+
+    kana_list = list()
+    for chunks in result['result']:
+        for token in chunks["tokens"]:
+            kana_list.append(token["kana"])
+
+    d = {}
+    d['sentence'] = sentence
+    d['kana'] = ' '.join(kana_list)
+    d['text_length'] = len(sentence)
+    d['next_line_number'] = next_line_number
+
+    return dumps(d)
+
+
+def __checkLineNumber__(lines, index):
+    if(lines <= index):
+        index = 0
+    return index
 
 
 # # メッセージをランダムに表示するメソッド

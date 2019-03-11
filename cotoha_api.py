@@ -1,13 +1,27 @@
 # -*- coding:utf-8 -*-
 
+import os
 import json
 import urllib.request
+import configparser
+
+# ソースファイルの場所取得
+APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + "/"
+SETTINGS = "settings/config.ini"
+
+# 設定値取得
+config = configparser.ConfigParser()
+config.read(APP_ROOT + SETTINGS)
+CLIENT_ID = config.get("COTOHA API", "Developer Client id")
+CLIENT_SECRET = config.get("COTOHA API", "Developer Client secret")
+DEVELOPER_API_BASE_URL = config.get("COTOHA API", "Developer API Base URL")
+ACCESS_TOKEN_PUBLISH_URL = config.get("COTOHA API", "Access Token Publish URL")
 
 
 # COTOHA API操作用クラス
 class CotohaApi:
     # 初期化
-    def __init__(self, client_id, client_secret, developer_api_base_url, access_token_publish_url):
+    def __init__(self, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, developer_api_base_url=DEVELOPER_API_BASE_URL, access_token_publish_url=ACCESS_TOKEN_PUBLISH_URL):
         self.client_id = client_id
         self.client_secret = client_secret
         self.developer_api_base_url = developer_api_base_url
