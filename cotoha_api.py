@@ -122,7 +122,7 @@ class CotohaApi:
         # リクエストを送信し、レスポンスを受信
         return self.__apiHelper__(url, data)
 
-    # 構文解析API
+    # 感情分析API
     def sentiment(self, sentence):
         # URL指定
         url = self.developer_api_base_url + "v1/sentiment"
@@ -140,6 +140,28 @@ class CotohaApi:
         # リクエストボディ指定
         data = {
             "document": document
+        }
+        # リクエストを送信し、レスポンスを受信
+        return self.__apiHelper__(url, data)
+
+    # 言い淀み除去API
+    def removeFiller(self, text):
+        # URL指定
+        url = self.developer_api_base_url + "beta/remove_filler"
+        # リクエストボディ指定
+        data = {
+            "text": text
+        }
+        # リクエストを送信し、レスポンスを受信
+        return self.__apiHelper__(url, data)
+
+    # 音声認識結果誤り検知API
+    def detectMisrecognition(self, sentence):
+        # URL指定
+        url = self.developer_api_base_url + "beta/detect_misrecognition"
+        # リクエストボディ指定
+        data = {
+            "sentence": sentence
         }
         # リクエストを送信し、レスポンスを受信
         return self.__apiHelper__(url, data)
