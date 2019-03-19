@@ -82,7 +82,6 @@ function user_attribute() {
     if (reading) {
       $("#document").text(data.sentence);
       addList("#result", data.result);
-
       line_number = data.next_line_number;
       if (line_number != 0) {
         // Promise.resolve()
@@ -162,6 +161,25 @@ function addList(element, result) {
 
 function removeList(element) {
   $(element + ":first").empty();
+}
+
+function plotres(response, prefix) {
+  for (var key in response) {
+    if (typeof response[key] == "object") {
+      if (Array.isArray(response[key])) {
+        // 配列の場合は forEach で要素ごとにに再帰呼び出し
+        response[key].forEach(function(item) {
+          plotres(item, prefix + " " + key);
+        });
+      } else {
+        // 連想配列はそのまま再帰呼び出し
+        plotres(response[key], prefix + " " + key);
+      }
+    } else {
+      // 配列や連想配列でなければキーの値を表示
+      console.log(prefix + " " + key + ": " + response[key]);
+    }
+  }
 }
 
 $(function() {
