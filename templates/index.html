@@ -1,18 +1,18 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %}
 
-<div class="container">
-  <nav class="navbar navbar-light bg-light">
-    <span class="navbar-brand" id="subtitle">青空文庫朗読 bot</span>
-    <form class="form-inline">
-      <button class="btn btn-outline-dark my-2" id={{action}} type="submit">Start</button>
+{% block content %}
+<div class='container'>
+  <nav class='navbar navbar-light bg-light'>
+    <span class='navbar-brand' id='subtitle'>青空文庫朗読 bot</span>
+    <form class='form-inline'>
+      <button class='btn btn-outline-dark my-2' id={{action}} type='submit'>Start</button>
     </form>
   </nav>
-  <div class="row">
-    <div class="col mx-2 my-2" id="document" style="font-size: 100%">Press the Start button</div>
+  <div class='row'>
+    <div class='col mx-2 my-2' id='document' style='font-size: 100%'>Press the Start button</div>
   </div>
-  <div class="row">
-    <div class="col mx-2" id="result" style="font-size: 70%"></div>
+  <div class='row'>
+    <div class='col mx-2' id='result' style='font-size: 70%'></div>
   </div>
 </div>
-
 {% endblock %}

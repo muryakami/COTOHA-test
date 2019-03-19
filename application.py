@@ -8,30 +8,37 @@ from cotoha_api import CotohaApi
 app = Flask(__name__)
 
 # APP_ROOT の設定
-APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + "/"
+APP_ROOT = os.path.dirname(os.path.abspath(__file__)) + '/'
+
+# text の場所を指定する
+# PLAIN_TEXT = 'data/text/sentence/neko.txt'
+PLAIN_TEXT = 'data/text/neko_1.txt'
+f = open(APP_ROOT + PLAIN_TEXT, 'r')
+document = f.read()
+lines = document.splitlines()
+
+# COTOHA APIインスタンス生成
+cotoha_api = CotohaApi()
 
 
-@app.route("/")
+@app.route('/')
 def index():
-    # app.logger.debug(lines['result'])
-    action = "parse"
+    # app.logger.debug(lines)
+    action = 'user_attribute'
     return render_template('index.html', action=action)
 
 
 @app.route('/read', methods=['POST'])
 def read():
     # json の場所を指定する
-    f = open(APP_ROOT + "data/json/neko.json", "r")
+    f = open(APP_ROOT + 'data/json/neko.json', 'r')
     lines = loads(f.read())
-
-    # global lines
-    # app.logger.debug(lines)
 
     # line_number = int(request.args.get('line_number'))  # ['GET']
     line_number = int(request.form['line_number'])  # ['POST']
 
-    line_number = __checkLineNumber__(len(lines), line_number)
-    next_line_number = __checkLineNumber__(len(lines), line_number + 1)
+    line_number = __checkLineNumber__(lines, line_number)
+    next_line_number = __checkLineNumber__(lines, line_number + 1)
 
     d = lines['result'][line_number]
 
@@ -43,32 +50,83 @@ def read():
 
 @app.route('/parse', methods=['POST'])
 def parse():
-    f = open(APP_ROOT + "data/text/sentence/neko.txt", "r")
-    document = f.read()
-    # num_lines = sum(1 for line in open(
-    #     APP_ROOT + 'data/text/sentence/neko.txt'))
-    lines = document.splitlines()
+    global lines, cotoha_api
 
+    # 現在の行数
     line_number = int(request.form['line_number'])
+    line_number = __checkLineNumber__(lines, line_number)
+    next_line_number = __checkLineNumber__(lines, line_number + 1)
 
-    line_number = __checkLineNumber__(len(lines), line_number)
-    next_line_number = __checkLineNumber__(len(lines), line_number + 1)
-
-    # COTOHA APIインスタンス生成
-    cotoha_api = CotohaApi()
     # 解析対象文
     sentence = lines[line_number]
     # 構文解析API実行
     result = cotoha_api.parse(sentence)
 
-    kana_list = list()
+    # 解析結果の整形
+    response = list()
     for chunks in result['result']:
-        for token in chunks["tokens"]:
-            kana_list.append(token["kana"])
+        for token in chunks['tokens']:
+            response.append(token['kana'])
 
+    # レスポンス生成
     d = {}
     d['sentence'] = sentence
-    d['kana'] = ' '.join(kana_list)
+    d['kana'] = ' '.join(response)
+    d['text_length'] = len(sentence)
+    d['next_line_number'] = next_line_number
+
+    return dumps(d)
+
+
+@app.route('/keyword', methods=['POST'])
+def keyword():
+    global lines, cotoha_api
+
+    # 現在の行数
+    line_number = int(request.form['line_number'])
+    line_number = __checkLineNumber__(lines, line_number)
+    next_line_number = __checkLineNumber__(lines, line_number + 1)
+
+    # 解析対象文
+    sentence = lines[line_number]
+    # 構文解析API実行
+    result = cotoha_api.keyword(sentence)
+
+    # 解析結果の整形
+    response = list()
+    for word in result['result']:
+        response.append(word['form'])
+
+    # レスポンスの生成
+    d = {}
+    d['sentence'] = sentence
+    d['form'] = ' '.join(response)
+    d['text_length'] = len(sentence)
+    d['next_line_number'] = next_line_number
+
+    return dumps(d)
+
+
+@app.route('/user_attribute', methods=['POST'])
+def user_attribute():
+    global lines, cotoha_api
+
+    # 現在の行数
+    line_number = int(request.form['line_number'])
+    line_number = __checkLineNumber__(lines, line_number)
+    next_line_number = __checkLineNumber__(lines, line_number + 1)
+
+    # 解析対象文
+    sentence = lines[line_number]
+    # 構文解析API実行
+    result = cotoha_api.userAttribute(sentence)
+
+    # レスポンスの生成
+    d = {}
+    d['sentence'] = sentence
+    d['result'] = result['result']
+    # for key, value in result['result'].items():
+    #     d[key] = value
     d['text_length'] = len(sentence)
     d['next_line_number'] = next_line_number
 
@@ -76,7 +134,7 @@ def parse():
 
 
 def __checkLineNumber__(lines, index):
-    if(lines <= index):
+    if(len(lines) <= index):
         index = 0
     return index
 

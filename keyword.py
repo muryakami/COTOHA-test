@@ -24,9 +24,10 @@ cotoha_api = CotohaApi(CLIENT_ID, CLIENT_SECRET,
                        DEVELOPER_API_BASE_URL, ACCESS_TOKEN_PUBLISH_URL)
 
 # 解析対象文
-TEXT_NAME = 'data/text/neko.txt'
-with open(TEXT_NAME) as f:
-    document = f.read()
+# TEXT_NAME = 'data/text/neko.txt'
+# with open(TEXT_NAME) as f:
+#     document = f.read()
+document = input()
 
 # 構文解析API実行
 result = cotoha_api.keyword(document)
@@ -36,7 +37,7 @@ result_formated = json.dumps(result, indent=4, separators=(',', ': '))
 print(codecs.decode(result_formated, 'unicode-escape'))
 
 # 別ファイルへの保存
-JSON_NAME = TEXT_NAME.replace('text', 'json').replace('.txt', '.json')
-print(JSON_NAME)
-with open(JSON_NAME, 'w') as f:
-    f.write(codecs.decode(result_formated, 'unicode-escape'))
+# JSON_NAME = TEXT_NAME.replace('text', 'json').replace('.txt', '.json')
+# print(JSON_NAME)
+# with open(JSON_NAME, 'w') as f:
+#     f.write(codecs.decode(result_formated, 'unicode-escape'))
