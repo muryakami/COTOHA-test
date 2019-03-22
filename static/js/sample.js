@@ -1,12 +1,13 @@
-var url = location.href;
-var reading = false;
-var line_number = 0;
-var instruction_text = "";
-var brand_text = "";
+// let url = location.href;
+let url = location.origin;
+let reading = false;
+let line_number = 0;
+let instruction_text = "";
+let brand_text = "";
 
 function read() {
   $.ajax({
-    url: url + "read",
+    url: url + "/read",
     type: "POST",
     dataType: "JSON",
     data: {
@@ -28,7 +29,7 @@ function read() {
 
 function parse() {
   $.ajax({
-    url: url + "parse",
+    url: url + "/parse",
     type: "POST",
     dataType: "JSON",
     data: {
@@ -50,7 +51,7 @@ function parse() {
 
 function keyword() {
   $.ajax({
-    url: url + "keyword",
+    url: url + "/keyword",
     type: "POST",
     dataType: "JSON",
     data: {
@@ -72,7 +73,7 @@ function keyword() {
 
 function user_attribute() {
   $.ajax({
-    url: url + "user_attribute",
+    url: url + "/user_attribute",
     type: "POST",
     dataType: "JSON",
     data: {
@@ -84,21 +85,6 @@ function user_attribute() {
       addList("#result", data.result);
       line_number = data.next_line_number;
       if (line_number != 0) {
-        // Promise.resolve()
-        //   .then(function() {
-        //     return new Promise(function(resolve, reject) {
-        //       setTimeout(function() {
-        //         resolve(user_attribute());
-        //       }, data.text_length * 200);
-        //     });
-        //   })
-        //   .then(function() {
-        //     removeList("#result");
-        //   })
-        //   .catch(function() {
-        //     console.error("Something wrong!");
-        //   });
-
         Promise.resolve()
           .then(() => wait(data.text_length * 200))
           .then(() => user_attribute())
@@ -129,13 +115,17 @@ const wait = milliseconds =>
   new Promise(resolve => setTimeout(resolve, milliseconds));
 
 function startReading() {
-  $("button").text("Stop");
+  $(".btn").text("Stop");
+  // .removeClass("dropdown-toggle");
   reading = true;
+  // return $("dropdown-menu").detach();
 }
 
-function resumeReading() {
-  $("button").text("Start");
+function resumeReading(menu) {
+  $(".btn").text("Start");
+  // .addClass("dropdown-toggle");
   reading = false;
+  // $("dropdown-menu").append(menu);
 }
 
 function stopReading() {
@@ -183,10 +173,11 @@ function plotres(response, prefix) {
 }
 
 $(function() {
-  $("button").click(function() {
+  $("#action").click(function() {
     if (reading) {
       resumeReading();
     } else {
+      debugger;
       let action = $(this).attr("id");
       switch (action) {
         case "read":
@@ -213,3 +204,29 @@ $(function() {
 $(function() {
   instruction_text = $("#document").text();
 });
+
+// $(function() {
+//   $(".dropdown-item").click(function() {
+//     $("#action").text($(this).text());
+//   });
+// });
+
+$(function() {
+  $(".switch-btn").on("click", function() {
+    $(".report").toggle("fast", alertFunc);
+  });
+
+  function alertFunc() {
+    if ($(this).css("display") == "block") {
+      $("#btn-inner").text("▲ 閉じる");
+    } else {
+      $("#btn-inner").text("▼ 開く");
+    }
+  }
+});
+
+// $(function() {
+//   $(".dropdown-item").on("click", function() {
+//     $("#action").text("▲ 閉じる");
+//   });
+// });
