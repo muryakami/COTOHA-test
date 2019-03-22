@@ -13,7 +13,7 @@ function read() {
     data: {
       line_number: line_number
     }
-  }).done(function(data) {
+  }).done(function (data) {
     if (reading) {
       $("#document").text(data.form);
       $("#result").text(data.score);
@@ -35,7 +35,7 @@ function parse() {
     data: {
       line_number: line_number
     }
-  }).done(function(data) {
+  }).done(function (data) {
     if (reading) {
       $("#document").text(data.sentence);
       $("#result").text(data.kana);
@@ -57,7 +57,7 @@ function keyword() {
     data: {
       line_number: line_number
     }
-  }).done(function(data) {
+  }).done(function (data) {
     if (reading) {
       $("#document").text(data.sentence);
       $("#result").text(data.form);
@@ -79,7 +79,7 @@ function user_attribute() {
     data: {
       line_number: line_number
     }
-  }).done(function(data) {
+  }).done(function (data) {
     if (reading) {
       $("#document").text(data.sentence);
       addList("#result", data.result);
@@ -115,17 +115,13 @@ const wait = milliseconds =>
   new Promise(resolve => setTimeout(resolve, milliseconds));
 
 function startReading() {
-  $(".btn").text("Stop");
-  // .removeClass("dropdown-toggle");
+  $("#action").text("Stop");
   reading = true;
-  // return $("dropdown-menu").detach();
 }
 
 function resumeReading(menu) {
-  $(".btn").text("Start");
-  // .addClass("dropdown-toggle");
+  $("#action").text("Start");
   reading = false;
-  // $("dropdown-menu").append(menu);
 }
 
 function stopReading() {
@@ -139,7 +135,7 @@ function addList(element, result) {
   let ul = $("<ul>")
     .addClass("list")
     .css("list-style", "none"); // ul タグを生成して ul に追加
-  Object.keys(result).forEach(function(key) {
+  Object.keys(result).forEach(function (key) {
     let val = this[key]; // this は obj
     let li = $("<li>").text(key + ": " + val); // li タグを生成してテキスト追加
     ul.append(li); // ul に生成した li タグを追加
@@ -158,7 +154,7 @@ function plotres(response, prefix) {
     if (typeof response[key] == "object") {
       if (Array.isArray(response[key])) {
         // 配列の場合は forEach で要素ごとにに再帰呼び出し
-        response[key].forEach(function(item) {
+        response[key].forEach(function (item) {
           plotres(item, prefix + " " + key);
         });
       } else {
@@ -172,13 +168,13 @@ function plotres(response, prefix) {
   }
 }
 
-$(function() {
-  $("#action").click(function() {
+$(function () {
+  $("#action").click(function () {
     if (reading) {
       resumeReading();
     } else {
-      debugger;
-      let action = $(this).attr("id");
+      let text = $(this).text();
+      let action = $(`span:contains(${text})`).attr("id");
       switch (action) {
         case "read":
           read();
@@ -194,6 +190,7 @@ $(function() {
           break;
         default:
           debugger;
+          return false;
       }
       startReading();
     }
@@ -201,32 +198,26 @@ $(function() {
   });
 });
 
-$(function() {
+$(function () {
   instruction_text = $("#document").text();
 });
 
-// $(function() {
-//   $(".dropdown-item").click(function() {
-//     $("#action").text($(this).text());
-//   });
-// });
-
-$(function() {
-  $(".switch-btn").on("click", function() {
-    $(".report").toggle("fast", alertFunc);
+$(function () {
+  $(".dropdown-item").click(function () {
+    $("#action").text($(this).text());
   });
-
-  function alertFunc() {
-    if ($(this).css("display") == "block") {
-      $("#btn-inner").text("▲ 閉じる");
-    } else {
-      $("#btn-inner").text("▼ 開く");
-    }
-  }
 });
 
-// $(function() {
-//   $(".dropdown-item").on("click", function() {
-//     $("#action").text("▲ 閉じる");
+// $(function () {
+//   $(".switch-btn").on("click", function () {
+//     $(".dropdown-menu").toggle("fast", alertFunc);
 //   });
+
+//   function alertFunc() {
+//     if ($(this).css("display") == "block") {
+//       $("#action").text("▲ 閉じる");
+//     } else {
+//       $("#action").text("▼ 開く");
+//     }
+//   }
 // });
