@@ -71,6 +71,32 @@ function keyword() {
   });
 }
 
+function sentiment() {
+  $.ajax({
+    url: url + "/sentiment",
+    type: "POST",
+    dataType: "JSON",
+    data: {
+      line_number: line_number
+    }
+  }).done(function(data) {
+    if (reading) {
+      $("#document").text(data.sentence);
+      addList("#result", data.result);
+      line_number = data.next_line_number;
+      if (line_number != 0) {
+        Promise.resolve()
+          .then(() => wait(data.text_length * 200))
+          .then(() => sentiment())
+          .then(() => removeList("#result"))
+          .catch(() => console.error("Something wrong!"));
+      } else {
+        setTimeout(stopReading, data.text_length * 200);
+      }
+    }
+  });
+}
+
 function user_attribute() {
   $.ajax({
     url: url + "/user_attribute",
@@ -183,6 +209,9 @@ $(function() {
           break;
         case "keyword":
           keyword();
+          break;
+        case "sentiment":
+          sentiment();
           break;
         case "user_attribute":
           user_attribute();

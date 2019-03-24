@@ -107,6 +107,30 @@ def keyword():
     return dumps(d)
 
 
+@app.route('/sentiment', methods=['POST'])
+def sentiment():
+    global lines, cotoha_api
+
+    # 現在の行数
+    line_number = int(request.form['line_number'])
+    line_number = __checkLineNumber__(lines, line_number)
+    next_line_number = __checkLineNumber__(lines, line_number + 1)
+
+    # 解析対象文
+    sentence = lines[line_number]
+    # 構文解析API実行
+    result = cotoha_api.sentiment(sentence)
+
+    # レスポンスの生成
+    d = {}
+    d['sentence'] = sentence
+    d['result'] = result['result']
+    d['text_length'] = len(sentence)
+    d['next_line_number'] = next_line_number
+
+    return dumps(d)
+
+
 @app.route('/user_attribute', methods=['POST'])
 def user_attribute():
     global lines, cotoha_api
