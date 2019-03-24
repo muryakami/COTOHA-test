@@ -5,6 +5,10 @@ let line_number = 0;
 let instruction_text = "";
 let brand_text = "";
 
+// milliseconds後にresolveするpromiseオブジェクトを戻す関数
+const wait = milliseconds =>
+  new Promise(resolve => setTimeout(resolve, milliseconds));
+
 function read() {
   $.ajax({
     url: url + "/read",
@@ -135,10 +139,6 @@ function user_attribute() {
     }
   });
 }
-
-// milliseconds後にresolveするpromiseオブジェクトを戻す関数
-const wait = milliseconds =>
-  new Promise(resolve => setTimeout(resolve, milliseconds));
 
 function startReading() {
   $("#action").text("Stop");

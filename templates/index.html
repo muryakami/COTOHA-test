@@ -1,45 +1,13 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %} {% block main %}
 <div class="container">
   <nav class="navbar navbar-light bg-light">
-    <span class="navbar-brand" id="subtitle">青空文庫朗読 bot</span>
-    <form class="form-inline">
-      <div class="btn-group">
-        <button
-          type="button"
-          class="btn btn-outline-dark my-2"
-          id="action"
-          name="action"
-        >
-          Action
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-dark my-2 dropdown-toggle dropdown-toggle-split"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
-          <li class="dropdown-item" id="parse">構文解析</li>
-          <li class="dropdown-item" id="keyword">キーワード抽出</li>
-          <li class="dropdown-item" id="sentiment">感情分析</li>
-          <li class="dropdown-item" id="user_attribute">
-            ユーザ属性推定
-          </li>
-        </ul>
-      </div>
-    </form>
+    {% from "action.html" import action_form %}
+    {{ action_form(action) }}
   </nav>
-  <div class="row">
-    <div class="col mx-2 my-2" id="document" style="font-size: 100%">
-      Press the Start button
-    </div>
+  <div class="content">
+    {% from "content.html" import content %}
+    {{ content() }}
   </div>
-  <div class="row">
-    <div class="col mx-2" id="result" style="font-size: 70%"></div>
-  </div>
+  <script src="static/js/index.js"></script>
 </div>
-<script src="static/js/index.js"></script>
 {% endblock %}
