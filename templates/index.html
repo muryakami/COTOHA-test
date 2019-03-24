@@ -4,22 +4,28 @@
     <span class="navbar-brand" id="subtitle">青空文庫朗読 bot</span>
     <form class="form-inline">
       <div class="btn-group">
-        <button type="button" class="btn btn-outline-dark my-2" id="action">
+        <button
+          type="button"
+          class="btn btn-outline-dark my-2"
+          id="action"
+          name="action"
+        >
           Action
         </button>
-        <button type="button" class="btn btn-outline-dark my-2 dropdown-toggle dropdown-toggle-split"
-          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button
+          type="button"
+          class="btn btn-outline-dark my-2 dropdown-toggle dropdown-toggle-split"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
-          <li><span class="dropdown-item" id="parse">構文解析</span></li>
-          <li>
-            <span class="dropdown-item" id="keyword">キーワード抽出</span>
-          </li>
-          <li>
-            <span class="dropdown-item" id="user_attribute">
-              ユーザ属性推定
-            </span>
+          <li class="dropdown-item" id="parse">構文解析</li>
+          <li class="dropdown-item" id="keyword">キーワード抽出</li>
+          <li class="dropdown-item" id="user_attribute">
+            ユーザ属性推定
           </li>
         </ul>
       </div>
