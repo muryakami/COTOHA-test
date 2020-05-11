@@ -1,0 +1,13 @@
+{% extends "layout.html" %} {% block main %}
+<div class="container">
+  <nav class="navbar navbar-light bg-light">
+    {% from "action.html" import action_form %}
+    {{ action_form(action) }}
+  </nav>
+  <div class="content">
+    {% from "content.html" import content %}
+    {{ content() }}
+  </div>
+  <script src="static/js/index.js"></script>
+</div>
+{% endblock %}
